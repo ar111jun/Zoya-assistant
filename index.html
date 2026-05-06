@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Zoya</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Rajdhani:wght@600&family=Space+Grotesk:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+
+      body {
+        background: #0a0a0f;
+        color: white;
+        font-family: 'Space Grotesk', sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      .orb-wrapper {
+        position: relative;
+        width: 140px;
+        height: 140px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .orb {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        border: 1.5px solid rgba(140,100,255,0.6);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        position: relative;
+        z-index: 2;
+        animation: pulse 3s ease-in-out infinite;
+        transition: all 0.4s ease;
+      }
+
+      @keyframes pulse {
+        0%, 100% { box-shadow: 0 0 20px rgba(140,100,255,0.3); }
+        50%       { box-shadow: 0 0 50px rgba(140,100,255,0.7); }
+      }
+
+      .orb.awake {
+        border-color: rgba(80,200,160,0.8);
+        box-shadow: 0 0 50px rgba(80,200,160,0.4);
+        animation: none;
+      }
+
+      .z {
+        font-size: 58px;
+        font-weight: 600;
+        font-family: 'Rajdhani', sans-serif;
+        text-shadow: 0 0 8px rgba(140,100,255,0.6);
+        transition: all 0.4s ease;
+      }
+
+      .orb.awake .z {
+        text-shadow: 0 0 12px rgba(80,200,160,0.8);
+        color: #50c8a0;
+      }
+
+      .label {
+        margin-top: 24px;
+        font-size: 11px;
+        letter-spacing: 4px;
+        color: rgba(255,255,255,0.3);
+        text-transform: uppercase;
+        transition: all 0.3s;
+      }
+
+      .chat-box {
+        position: fixed;
+        bottom: -400px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 320px;
+        background: rgba(15,15,25,0.98);
+        border: 0.5px solid rgba(140,100,255,0.3);
+        border-radius: 20px 20px 0 0;
+        padding: 16px;
+        transition: bottom 0.4s cubic-bezier(0.16,1,0.3,1);
+        z-index: 100;
+      }
+
+      .chat-box.open {
+        bottom: 0;
+      }
+
+      .chat-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        padding-bottom: 10px;
+        border-bottom: 0.5px solid rgba(255,255,255,0.06);
+      }
+
+      .chat-title {
+        font-size: 11px;
+        letter-spacing: 3px;
+        color: rgba(255,255,255,0.4);
+        text-transform: uppercase;
+      }
+
+      .close-btn {
+        font-size: 18px;
+        color: rgba(255,255,255,0.3);
+        cursor: pointer;
+        transition: color 0.2s;
+        background: none;
+        border: none;
+        color: rgba(255,255,255,0.3);
+      }
+
+      .close-btn:hover { color: white; }
+
+      .messages {
+        height: 200px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding-right: 4px;
+      }
+
+      .messages::-webkit-scrollbar { width: 2px; }
+      .messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); }
+
+      .msg {
+        font-size: 13px;
+        line-height: 1.5;
+        padding: 8px 12px;
+        border-radius: 12px;
+        max-width: 85%;
+      }
+
+      .msg.zoya {
+        background: rgba(140,100,255,0.12);
+        border: 0.5px solid rgba(140,100,255,0.2);
+        color: rgba(255,255,255,0.8);
+        align-self: flex-start;
+        border-bottom-left-radius: 3px;
+      }
+
+      .msg.user {
+        background: rgba(255,255,255,0.06);
+        color: rgba(255,255,255,0.7);
+        align-self: flex-end;
+        border-bottom-right-radius: 3px;
+      }
+
+      .input-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .chat-input {
+        flex: 1;
+        background: rgba(255,255,255,0.04);
+        border: 0.5px solid rgba(255,255,255,0.1);
+        border-radius: 12px;
+        padding: 10px 14px;
+        color: white;
+        font-size: 13px;
+        font-family: 'Space Grotesk', sans-serif;
+        outline: none;
+        transition: border-color 0.2s;
+      }
+
+      .chat-input:focus {
+        border-color: rgba(140,100,255,0.4);
+      }
+
+      .chat-input::placeholder { color: rgba(255,255,255,0.2); }
+
+      .send-btn {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        background: rgba(140,100,255,0.2);
+        border: 0.5px solid rgba(140,100,255,0.4);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s;
+      }
+
+      .send-btn:hover {
+        background: rgba(140,100,255,0.4);
+      }
+      .side-cards {
+        position: fixed;
+        right: 24px;
+        top: 24px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: 220px;
+      }
+
+      .card {
+        background: rgba(255,255,255,0.03);
+        border: 0.5px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 10px 14px;
+        animation: slideIn 0.4s ease forwards;
+        opacity: 0;
+      }
+
+      @keyframes slideIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+      }
+
+      .card-tag {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-weight: 500;
+        margin-bottom: 6px;
+      }
+
+      .card-tag.weather { color: #50c8a0; }
+      .card-tag.news { color: #6090ff; }
+
+      .card-body {
+        font-size: 11px;
+        color: rgba(255,255,255,0.6);
+        line-height: 1.6;
+      }
+      .reminder-tracker {
+        position: fixed;
+        left: 24px;
+        top: 24px;
+        width: 190px;
+        background: rgba(10,10,20,0.85);
+        border: 0.5px solid rgba(255,255,255,0.08);
+        border-radius: 12px;
+        padding: 12px 14px;
+        backdrop-filter: blur(10px);
+        animation: fadeUp 0.5s ease 0.3s forwards;
+        opacity: 0;
+      }
+
+      @keyframes fadeUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .tracker-head {
+        font-size: 9px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.25);
+        margin-bottom: 10px;
+      }
+
+      .rem-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+        cursor: pointer;
+      }
+
+      .rem-dot {
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+        flex-shrink: 0;
+        transition: all 0.3s;
+      }
+
+      .rem-dot.done {
+        background: rgba(80,200,160,0.2);
+        border-color: #50c8a0;
+      }
+
+      .rem-text {
+        font-size: 11px;
+        color: rgba(255,255,255,0.5);
+        flex: 1;
+      }
+
+      .rem-text.done {
+        text-decoration: line-through;
+        color: rgba(255,255,255,0.2);
+      }
+
+      .rem-time {
+        font-size: 9px;
+        color: rgba(255,255,255,0.2);
+      }
+
+     .add-rem {
+        display: flex;
+        gap: 4px;
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 0.5px solid rgba(255,255,255,0.06);
+        align-items: center;
+      }
+    .rem-input {
+        background: rgba(255,255,255,0.05);
+        border: 0.5px solid rgba(255,255,255,0.08);
+        border-radius: 6px;
+        padding: 5px 6px;
+        color: rgba(255,255,255,0.7);
+        font-size: 10px;
+        font-family: 'Space Grotesk', sans-serif;
+        outline: none;
+        width: 100%;
+      }
+
+      .rem-input[type="time"] { width: 72px; flex-shrink: 0; }
+      .rem-input[placeholder] { flex: 1; }
+
+      .rem-btn {
+        width: 24px;
+        height: 24px;
+        border-radius: 6px;
+        background: rgba(140,100,255,0.2);
+        border: 0.5px solid rgba(140,100,255,0.4);
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .empty-rem {
+        font-size: 11px;
+        color: rgba(255,255,255,0.15);
+        text-align: center;
+        padding: 8px 0;
+      }
+
+      .progress-bar {
+        height: 2px;
+        background: rgba(255,255,255,0.06);
+        border-radius: 2px;
+        margin-top: 10px;
+        overflow: hidden;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #8050ff, #50c8a0);
+        border-radius: 2px;
+        width: 0%;
+        transition: width 0.5s ease;
+      }
+    </style>
+  </head>
+  <body>
+
+    <div class="orb-wrapper">
+      <div class="orb" id="orb" onclick="toggleZoya()">
+        <span class="z">Z</span>
+      </div>
+    </div>
+    <div class="label" id="label">Zoya — tap to talk</div>
+
+    <div class="side-cards" id="sideCards">
+      <div class="reminder-tracker">
+  <div class="tracker-head">Today's Reminders</div>
+  <div id="reminderList">
+    <div class="empty-rem">No reminders yet</div>
+  </div>
+  <div class="add-rem">
+    <input class="rem-input" id="remTime" type="time">
+    <input class="rem-input" id="remMsg" placeholder="Reminder...">
+    <button class="rem-btn" onclick="addReminder()">+</button>
+  </div>
+</div>
+  <div class="card" id="weatherCard">
+    <div class="card-tag weather">Weather</div>
+    <div class="card-body" id="weatherText">Loading...</div>
+  </div>
+  <div class="card" id="newsCard">
+    <div class="card-tag news">Top News</div>
+    <div class="card-body" id="newsText">Loading...</div>
+  </div>
+</div>
+
+    <div class="chat-box" id="chatBox">
+      <div class="chat-header">
+        <div class="chat-title">Zoya</div>
+        <button class="close-btn" onclick="toggleZoya()">✕</button>
+      </div>
+      <div class="messages" id="messages">
+        <div class="msg zoya">Hey! What can I help you with?</div>
+      </div>
+      <div class="input-row">
+        <input class="chat-input" id="chatInput" placeholder="Ask Zoya anything..." onkeydown="if(event.key==='Enter') sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">→</button>
+      </div>
+    </div>
+
+    <script>
+      let awake = false;
+
+      function toggleZoya() {
+        awake = !awake;
+        const orb = document.getElementById('orb');
+        const label = document.getElementById('label');
+        const chatBox = document.getElementById('chatBox');
+
+        if (awake) {
+          orb.classList.add('awake');
+          label.textContent = "I'm listening...";
+          chatBox.classList.add('open');
+        } else {
+          orb.classList.remove('awake');
+          label.textContent = 'Zoya — tap to talk';
+          chatBox.classList.remove('open');
+        }
+      }
+
+     async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const val = input.value.trim();
+    if (!val) return;
+
+    const msgs = document.getElementById('messages');
+
+    const userMsg = document.createElement('div');
+    userMsg.className = 'msg user';
+    userMsg.textContent = val;
+    msgs.appendChild(userMsg);
+    input.value = '';
+    msgs.scrollTop = msgs.scrollHeight;
+
+    const thinkingMsg = document.createElement('div');
+    thinkingMsg.className = 'msg zoya';
+    thinkingMsg.textContent = '...';
+    msgs.appendChild(thinkingMsg);
+
+  try {
+        const response = await fetch('http://127.0.0.1:5000/ask', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: val })
+        });
+        const data = await response.json();
+        thinkingMsg.textContent = data.reply;
+    } catch (error) {
+        thinkingMsg.textContent = 'Error: ' + error.message;
+    }
+    msgs.scrollTop = msgs.scrollHeight;
+}
+async function loadBriefing() {
+    try {
+        const res = await fetch('http://127.0.0.1:5000/briefing');
+        const data = await res.json();
+        document.getElementById('weatherText').textContent = data.weather;
+        document.getElementById('newsText').textContent = data.news;
+    } catch (e) {
+        document.getElementById('weatherText').textContent = 'Could not load weather';
+        document.getElementById('newsText').textContent = 'Could not load news';
+    }
+}
+let reminders = [];
+
+function addReminder() {
+    const time = document.getElementById('remTime').value;
+    const msg = document.getElementById('remMsg').value.trim();
+    if (!time || !msg) return;
+
+    reminders.push({ time, msg, done: false });
+    document.getElementById('remTime').value = '';
+    document.getElementById('remMsg').value = '';
+    renderReminders();
+    scheduleReminder(time, msg);
+}
+
+function toggleReminder(index) {
+    reminders[index].done = !reminders[index].done;
+    renderReminders();
+}
+
+function renderReminders() {
+    const list = document.getElementById('reminderList');
+    if (reminders.length === 0) {
+        list.innerHTML = '<div class="empty-rem">No reminders yet</div>';
+        return;
+    }
+    list.innerHTML = reminders.map((r, i) => `
+        <div class="rem-item" onclick="toggleReminder(${i})">
+            <div class="rem-dot ${r.done ? 'done' : ''}"></div>
+            <div class="rem-text ${r.done ? 'done' : ''}">${r.msg}</div>
+            <div class="rem-time">${r.time}</div>
+        </div>
+    `).join('');
+
+    const done = reminders.filter(r => r.done).length;
+    const pct = Math.round((done / reminders.length) * 100);
+    document.querySelector('.progress-fill').style.width = pct + '%';
+}
+
+function scheduleReminder(timeStr, msg) {
+    const now = new Date();
+    const [h, m] = timeStr.split(':').map(Number);
+    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+    if (target <= now) target.setDate(target.getDate() + 1);
+    const delay = target - now;
+    setTimeout(() => {
+        alert(`🔔 Reminder: ${msg}`);
+    }, delay);
+}
+
+loadBriefing();
+
+     
+    </script>
+
+  </body>
+</html>

@@ -1,19 +1,22 @@
 from groq import Groq
-import requests
-import schedule
+import os
 import time
 import threading
+import schedule
 import webbrowser
 import sounddevice as sd
 import numpy as np
 import scipy.io.wavfile as wav
 import speech_recognition as sr
 import tempfile
-import os
+from pathlib import Path
+from dotenv import load_dotenv
 
-GROQ_API_KEY = "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"
-WEATHER_API_KEY = "76e7779f6efa9ed3a78d13777eb4c319"
-NEWS_API_KEY = "b3d3ac45fdee4ed586aa3a72183d5c2a"
+load_dotenv(Path("C:/Users/Adminn/Desktop/zoya/.env"))
+
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 CITY = "Kochi"
 WORK_TABS = [
     "https://go.business360.app/v2/location/yYN9iZdulvQIskOjHiMY/opportunities",
