@@ -3,6 +3,7 @@ from flask_cors import CORS
 from groq import Groq
 import requests
 import os
+import yfinance as yf
 from dotenv import load_dotenv
 from pathlib import Path
 
@@ -70,6 +71,31 @@ def briefing():
         "weather": weather,
         "news": news
     })
-
+@app.route("/stocks", methods=["GET"])
+def get_stocks():
+    tickers = {
+        "NIFTY 50": "^NSEI",
+        "Reliance": "RELIANCE.NS",
+        "Nippon Gold": "GOLDBEES.NS",
+        "Silver ETF": "SILVERBEES.NS",
+        "Apple": "AAPL",
+        "Tesla": "TSLA",
+        "Google": "GOOGL"
+    }
+    result = []
+    for name, symbol in tickers.items():
+        try:
+            info = yf.Ticker(symbol).info
+            price = info.get("currentPrice") or info.get("regularMarketPrice")
+            change = info.get("regularMarketChangePercent", 0)
+            result.append({
+                "name": name,
+                "price": round(price, 2),
+                "change": round(change, 2),
+                "bullish": change >= 0
+            })
+        except:
+            pass
+    return jsonify(result)
 if __name__ == "__main__":
     app.run(port=5000)

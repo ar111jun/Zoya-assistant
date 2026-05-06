@@ -30,6 +30,10 @@ A Jarvis-style personal AI assistant built with Python that responds to voice co
 6. Run: `python brain.py`
 7. Say **"Hey Zoya"** to wake her up!
 
+<<<<<<< HEAD
 ## 🔑 Environment Variables
+=======
+##  Environment Variables
+>>>>>>> 95b36125d7c7f988765e203dd9f887dcef652b07
 
 Create a `.env` file with:

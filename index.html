@@ -89,9 +89,7 @@
         z-index: 100;
       }
 
-      .chat-box.open {
-        bottom: 0;
-      }
+      .chat-box.open { bottom: 36px; }
 
       .chat-header {
         display: flex;
@@ -111,7 +109,6 @@
 
       .close-btn {
         font-size: 18px;
-        color: rgba(255,255,255,0.3);
         cursor: pointer;
         transition: color 0.2s;
         background: none;
@@ -176,10 +173,7 @@
         transition: border-color 0.2s;
       }
 
-      .chat-input:focus {
-        border-color: rgba(140,100,255,0.4);
-      }
-
+      .chat-input:focus { border-color: rgba(140,100,255,0.4); }
       .chat-input::placeholder { color: rgba(255,255,255,0.2); }
 
       .send-btn {
@@ -197,9 +191,8 @@
         transition: all 0.2s;
       }
 
-      .send-btn:hover {
-        background: rgba(140,100,255,0.4);
-      }
+      .send-btn:hover { background: rgba(140,100,255,0.4); }
+
       .side-cards {
         position: fixed;
         right: 24px;
@@ -240,6 +233,7 @@
         color: rgba(255,255,255,0.6);
         line-height: 1.6;
       }
+
       .reminder-tracker {
         position: fixed;
         left: 24px;
@@ -305,15 +299,17 @@
         color: rgba(255,255,255,0.2);
       }
 
-     .add-rem {
+      .add-rem {
         display: flex;
         gap: 4px;
         margin-top: 10px;
         padding-top: 10px;
         border-top: 0.5px solid rgba(255,255,255,0.06);
         align-items: center;
+        overflow: hidden;
       }
-    .rem-input {
+
+      .rem-input {
         background: rgba(255,255,255,0.05);
         border: 0.5px solid rgba(255,255,255,0.08);
         border-radius: 6px;
@@ -322,11 +318,10 @@
         font-size: 10px;
         font-family: 'Space Grotesk', sans-serif;
         outline: none;
-        width: 100%;
       }
 
       .rem-input[type="time"] { width: 72px; flex-shrink: 0; }
-      .rem-input[placeholder] { flex: 1; }
+      .rem-input[placeholder] { flex: 1; min-width: 0; }
 
       .rem-btn {
         width: 24px;
@@ -365,9 +360,77 @@
         width: 0%;
         transition: width 0.5s ease;
       }
+
+      .ticker-wrap {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 36px;
+        background: rgba(10,10,20,0.95);
+        border-top: 0.5px solid rgba(255,255,255,0.08);
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        z-index: 100;
+      }
+
+      .ticker {
+        display: flex;
+        gap: 40px;
+        white-space: nowrap;
+        animation: tickerScroll 40s linear infinite;
+      }
+
+      @keyframes tickerScroll {
+        0% { transform: translateX(100vw); }
+        100% { transform: translateX(-100%); }
+      }
+
+      .ticker-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+      }
+
+      .ticker-name { color: rgba(255,255,255,0.5); }
+      .ticker-price { color: rgba(255,255,255,0.8); font-weight: 500; }
+      .ticker-change.up { color: #50c8a0; }
+      .ticker-change.down { color: #ff6060; }
+
+      .ticker-loading {
+        font-size: 11px;
+        color: rgba(255,255,255,0.3);
+      }
     </style>
   </head>
   <body>
+
+    <div class="reminder-tracker">
+      <div class="tracker-head">Today's Reminders</div>
+      <div id="reminderList">
+        <div class="empty-rem">No reminders yet</div>
+      </div>
+      <div class="progress-bar"><div class="progress-fill"></div></div>
+      <div class="add-rem">
+        <input class="rem-input" id="remTime" type="time">
+        <input class="rem-input" id="remMsg" placeholder="Reminder...">
+        <button class="rem-btn" onclick="addReminder()">+</button>
+      </div>
+    </div>
+
+    <div class="side-cards">
+      <div class="card">
+        <div class="card-tag weather">Weather</div>
+        <div class="card-body" id="weatherText">Loading...</div>
+      </div>
+      <div class="card">
+        <div class="card-tag news">Top News</div>
+        <div class="card-body" id="newsText">Loading...</div>
+      </div>
+    </div>
 
     <div class="orb-wrapper">
       <div class="orb" id="orb" onclick="toggleZoya()">
@@ -375,28 +438,6 @@
       </div>
     </div>
     <div class="label" id="label">Zoya — tap to talk</div>
-
-    <div class="side-cards" id="sideCards">
-      <div class="reminder-tracker">
-  <div class="tracker-head">Today's Reminders</div>
-  <div id="reminderList">
-    <div class="empty-rem">No reminders yet</div>
-  </div>
-  <div class="add-rem">
-    <input class="rem-input" id="remTime" type="time">
-    <input class="rem-input" id="remMsg" placeholder="Reminder...">
-    <button class="rem-btn" onclick="addReminder()">+</button>
-  </div>
-</div>
-  <div class="card" id="weatherCard">
-    <div class="card-tag weather">Weather</div>
-    <div class="card-body" id="weatherText">Loading...</div>
-  </div>
-  <div class="card" id="newsCard">
-    <div class="card-tag news">Top News</div>
-    <div class="card-body" id="newsText">Loading...</div>
-  </div>
-</div>
 
     <div class="chat-box" id="chatBox">
       <div class="chat-header">
@@ -412,15 +453,21 @@
       </div>
     </div>
 
+    <div class="ticker-wrap">
+      <div class="ticker" id="ticker">
+        <span class="ticker-loading">Loading stocks...</span>
+      </div>
+    </div>
+
     <script>
       let awake = false;
+      let reminders = [];
 
       function toggleZoya() {
         awake = !awake;
         const orb = document.getElementById('orb');
         const label = document.getElementById('label');
         const chatBox = document.getElementById('chatBox');
-
         if (awake) {
           orb.classList.add('awake');
           label.textContent = "I'm listening...";
@@ -432,101 +479,111 @@
         }
       }
 
-     async function sendMessage() {
-    const input = document.getElementById('chatInput');
-    const val = input.value.trim();
-    if (!val) return;
-
-    const msgs = document.getElementById('messages');
-
-    const userMsg = document.createElement('div');
-    userMsg.className = 'msg user';
-    userMsg.textContent = val;
-    msgs.appendChild(userMsg);
-    input.value = '';
-    msgs.scrollTop = msgs.scrollHeight;
-
-    const thinkingMsg = document.createElement('div');
-    thinkingMsg.className = 'msg zoya';
-    thinkingMsg.textContent = '...';
-    msgs.appendChild(thinkingMsg);
-
-  try {
-        const response = await fetch('http://127.0.0.1:5000/ask', {
+      async function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const val = input.value.trim();
+        if (!val) return;
+        const msgs = document.getElementById('messages');
+        const userMsg = document.createElement('div');
+        userMsg.className = 'msg user';
+        userMsg.textContent = val;
+        msgs.appendChild(userMsg);
+        input.value = '';
+        const thinkingMsg = document.createElement('div');
+        thinkingMsg.className = 'msg zoya';
+        thinkingMsg.textContent = '...';
+        msgs.appendChild(thinkingMsg);
+        msgs.scrollTop = msgs.scrollHeight;
+        try {
+          const response = await fetch('http://127.0.0.1:5000/ask', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: val })
-        });
-        const data = await response.json();
-        thinkingMsg.textContent = data.reply;
-    } catch (error) {
-        thinkingMsg.textContent = 'Error: ' + error.message;
-    }
-    msgs.scrollTop = msgs.scrollHeight;
-}
-async function loadBriefing() {
-    try {
-        const res = await fetch('http://127.0.0.1:5000/briefing');
-        const data = await res.json();
-        document.getElementById('weatherText').textContent = data.weather;
-        document.getElementById('newsText').textContent = data.news;
-    } catch (e) {
-        document.getElementById('weatherText').textContent = 'Could not load weather';
-        document.getElementById('newsText').textContent = 'Could not load news';
-    }
-}
-let reminders = [];
+          });
+          const data = await response.json();
+          thinkingMsg.textContent = data.reply;
+        } catch (error) {
+          thinkingMsg.textContent = 'Error: ' + error.message;
+        }
+        msgs.scrollTop = msgs.scrollHeight;
+      }
 
-function addReminder() {
-    const time = document.getElementById('remTime').value;
-    const msg = document.getElementById('remMsg').value.trim();
-    if (!time || !msg) return;
+      async function loadBriefing() {
+        try {
+          const res = await fetch('http://127.0.0.1:5000/briefing');
+          const data = await res.json();
+          document.getElementById('weatherText').textContent = data.weather;
+          document.getElementById('newsText').textContent = data.news;
+        } catch (e) {
+          document.getElementById('weatherText').textContent = 'Could not load weather';
+          document.getElementById('newsText').textContent = 'Could not load news';
+        }
+      }
 
-    reminders.push({ time, msg, done: false });
-    document.getElementById('remTime').value = '';
-    document.getElementById('remMsg').value = '';
-    renderReminders();
-    scheduleReminder(time, msg);
-}
+      async function loadStocks() {
+        try {
+          const res = await fetch('http://127.0.0.1:5000/stocks');
+          const stocks = await res.json();
+          const ticker = document.getElementById('ticker');
+          ticker.innerHTML = stocks.map(s => `
+            <div class="ticker-item">
+              <span class="ticker-name">${s.name}</span>
+              <span class="ticker-price"> ₹${s.price}</span>
+              <span class="ticker-change ${s.bullish ? 'up' : 'down'}">
+                ${s.bullish ? '▲' : '▼'} ${Math.abs(s.change)}%
+              </span>
+            </div>
+          `).join('<span style="color:rgba(255,255,255,0.1);margin:0 10px">|</span>');
+        } catch(e) {
+          console.log('Stock error:', e);
+        }
+      }
 
-function toggleReminder(index) {
-    reminders[index].done = !reminders[index].done;
-    renderReminders();
-}
+      function addReminder() {
+        const time = document.getElementById('remTime').value;
+        const msg = document.getElementById('remMsg').value.trim();
+        if (!time || !msg) return;
+        reminders.push({ time, msg, done: false });
+        document.getElementById('remTime').value = '';
+        document.getElementById('remMsg').value = '';
+        renderReminders();
+        scheduleReminder(time, msg);
+      }
 
-function renderReminders() {
-    const list = document.getElementById('reminderList');
-    if (reminders.length === 0) {
-        list.innerHTML = '<div class="empty-rem">No reminders yet</div>';
-        return;
-    }
-    list.innerHTML = reminders.map((r, i) => `
-        <div class="rem-item" onclick="toggleReminder(${i})">
+      function toggleReminder(index) {
+        reminders[index].done = !reminders[index].done;
+        renderReminders();
+      }
+
+      function renderReminders() {
+        const list = document.getElementById('reminderList');
+        if (reminders.length === 0) {
+          list.innerHTML = '<div class="empty-rem">No reminders yet</div>';
+          return;
+        }
+        list.innerHTML = reminders.map((r, i) => `
+          <div class="rem-item" onclick="toggleReminder(${i})">
             <div class="rem-dot ${r.done ? 'done' : ''}"></div>
             <div class="rem-text ${r.done ? 'done' : ''}">${r.msg}</div>
             <div class="rem-time">${r.time}</div>
-        </div>
-    `).join('');
+          </div>
+        `).join('');
+        const done = reminders.filter(r => r.done).length;
+        const pct = Math.round((done / reminders.length) * 100);
+        document.querySelector('.progress-fill').style.width = pct + '%';
+      }
 
-    const done = reminders.filter(r => r.done).length;
-    const pct = Math.round((done / reminders.length) * 100);
-    document.querySelector('.progress-fill').style.width = pct + '%';
-}
+      function scheduleReminder(timeStr, msg) {
+        const now = new Date();
+        const [h, m] = timeStr.split(':').map(Number);
+        const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
+        if (target <= now) target.setDate(target.getDate() + 1);
+        const delay = target - now;
+        setTimeout(() => alert(`🔔 Reminder: ${msg}`), delay);
+      }
 
-function scheduleReminder(timeStr, msg) {
-    const now = new Date();
-    const [h, m] = timeStr.split(':').map(Number);
-    const target = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m, 0);
-    if (target <= now) target.setDate(target.getDate() + 1);
-    const delay = target - now;
-    setTimeout(() => {
-        alert(`🔔 Reminder: ${msg}`);
-    }, delay);
-}
-
-loadBriefing();
-
-     
+      loadBriefing();
+      loadStocks();
     </script>
 
   </body>
